@@ -41,4 +41,9 @@ return [
         'redirect' => '/auth/google/callback',
     ],
 
+    'razorpay' => [
+        'key' => env('RAZORPAY_KEY_ID'),
+        'secret' => env('RAZORPAY_KEY_SECRET'),
+    ],
+
 ];

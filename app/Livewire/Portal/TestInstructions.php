@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Livewire\Portal;
 
+use App\Enums\AttemptStatus;
 use App\Models\ExamAttempt;
 use App\Models\Test;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -19,6 +19,15 @@ class TestInstructions extends Component
 
     public function mount(Test $test): void
     {
+        abort_unless($test->is_published, 404);
+
+        if (!Auth::user()->canAccessTest($test)) {
+            session()->flash('access_error', 'This mock test is part of a paid test series. Buy the series to unlock it.');
+            $this->redirectRoute('portal.series');
+
+            return;
+        }
+
         $this->test = $test->load(['sections.questions']);
     }
 
@@ -29,14 +38,10 @@ class TestInstructions extends Component
             return;
         }
 
-        // Get or default to first student user for emulation
-        $user = User::where('role', 'student')->first() ?? User::first();
-
-        // Create an attempt
         $attempt = ExamAttempt::create([
-            'user_id' => $user->id,
+            'user_id' => Auth::id(),
             'test_id' => $this->test->id,
-            'status' => \App\Enums\AttemptStatus::IN_PROGRESS,
+            'status' => AttemptStatus::IN_PROGRESS,
             'started_at' => now(),
         ]);
 

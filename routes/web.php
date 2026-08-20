@@ -16,6 +16,7 @@ use App\Livewire\Admin\UserIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Cbt\ExamRunner;
+use App\Livewire\Portal\Checkout;
 use App\Livewire\Portal\Dashboard as PortalDashboard;
 use App\Livewire\Portal\Onboarding;
 use App\Livewire\Portal\Profile;
@@ -54,9 +55,10 @@ Route::get('/profile', Profile::class)->middleware('auth')->name('portal.profile
 // Student Portal
 Route::get('/', PortalDashboard::class)->middleware('auth')->name('portal.dashboard');
 Route::get('/test-series', TestSeries::class)->name('portal.series');
-Route::get('/test/{test:slug}/instructions', TestInstructions::class)->name('portal.test.instructions');
-Route::get('/cbt/attempt/{attempt}', ExamRunner::class)->name('cbt.runner');
-Route::get('/attempt/{attempt}/result', TestResult::class)->name('portal.test.result');
+Route::get('/checkout/{package:slug}', Checkout::class)->middleware('auth')->name('portal.checkout');
+Route::get('/test/{test:slug}/instructions', TestInstructions::class)->middleware('auth')->name('portal.test.instructions');
+Route::get('/cbt/attempt/{attempt}', ExamRunner::class)->middleware('auth')->name('cbt.runner');
+Route::get('/attempt/{attempt}/result', TestResult::class)->middleware('auth')->name('portal.test.result');
 
 // Admin Workspace (Guarded by AdminMiddleware)
 Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->group(function () {

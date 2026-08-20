@@ -70,8 +70,64 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function attempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class);
+    }
+
+    /**
+     * Non-expired owned package IDs (memoized per request).
+     *
+     * @return array<int, int>
+     */
+    public function activePackageIds(): array
+    {
+        return once(function () {
+            return $this->packages()
+                ->where(function ($query) {
+                    $query->whereNull('user_packages.expires_at')
+                        ->orWhere('user_packages.expires_at', '>', now());
+                })
+                ->pluck('packages.id')
+                ->all();
+        });
+    }
+
+    /**
+     * Single source of truth: IDs of tests the user may attempt
+     * (tests inside any free published package OR any owned active package).
+     *
+     * @return array<int, int>
+     */
+    public function accessibleTestIds(): array
+    {
+        return once(function () {
+            $query = Test::query()
+                ->where('is_published', true)
+                ->whereHas('packages', function ($q) {
+                    $q->where(function ($sq) {
+                        $sq->where(function ($fq) {
+                            $fq->where('is_free', true)->where('is_published', true);
+                        })->orWhereIn('packages.id', $this->activePackageIds());
+                    });
+                });
+
+            return $query->pluck('id')->all();
+        });
+    }
+
+    public function canAccessTest(Test $test): bool
+    {
+        return in_array($test->id, $this->accessibleTestIds(), true);
+    }
+
+    public function ownsPackage(Package $package): bool
+    {
+        return in_array($package->id, $this->activePackageIds(), true);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Package extends Model
 {
@@ -14,6 +15,7 @@ class Package extends Model
         'slug',
         'description',
         'price',
+        'validity_days',
         'is_free',
         'is_published',
     ];
@@ -22,9 +24,17 @@ class Package extends Model
     {
         return [
             'price' => 'decimal:2',
+            'validity_days' => 'integer',
             'is_free' => 'boolean',
             'is_published' => 'boolean',
         ];
+    }
+
+    public function validityLabel(): string
+    {
+        return $this->validity_days
+            ? $this->validity_days . ' days access'
+            : 'Lifetime access';
     }
 
     public function tests(): BelongsToMany
@@ -39,5 +49,10 @@ class Package extends Model
         return $this->belongsToMany(User::class, 'user_packages')
             ->withPivot('expires_at')
             ->withTimestamps();
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }

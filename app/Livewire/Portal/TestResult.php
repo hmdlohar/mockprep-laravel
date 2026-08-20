@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Portal;
 
 use App\Models\ExamAttempt;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -16,6 +17,8 @@ class TestResult extends Component
 
     public function mount(ExamAttempt $attempt): void
     {
+        abort_unless($attempt->user_id === Auth::id(), 403);
+
         $this->attempt = $attempt->load([
             'test.sections.questions.passage',
             'answers.question.topics',

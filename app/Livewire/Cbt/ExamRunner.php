@@ -9,6 +9,7 @@ use App\Enums\AnswerStatus;
 use App\Enums\AttemptStatus;
 use App\Models\AttemptAnswer;
 use App\Models\ExamAttempt;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -21,6 +22,8 @@ class ExamRunner extends Component
 
     public function mount(ExamAttempt $attempt): void
     {
+        abort_unless($attempt->user_id === Auth::id(), 403);
+
         $this->attempt = $attempt->load(['test.sections.questions.passage', 'user']);
 
         if ($this->attempt->status === AttemptStatus::COMPLETED) {

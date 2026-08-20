@@ -41,7 +41,8 @@
                     @endif
                     <div class="pt-2 text-xs text-slate-500 flex items-center gap-2">
                         <span class="font-bold text-slate-700">{{ $pkg->tests_count }}</span> Mock Tests Included &bull;
-                        <span class="font-bold text-slate-700">{{ $pkg->users_count }}</span> Enrolled
+                        <span class="font-bold text-slate-700">{{ $pkg->users_count }}</span> Enrolled &bull;
+                        <span class="font-bold text-slate-700">{{ $pkg->validity_days ? $pkg->validity_days . ' days' : 'Lifetime' }}</span>
                     </div>
                 </div>
 
@@ -83,7 +84,15 @@
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Price (₹)</label>
                             <input type="number" step="0.01" wire:model="price" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-bold focus:bg-white">
                         </div>
-                        <div class="pt-4 space-y-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Validity (days, blank = lifetime)</label>
+                            <input type="number" min="1" wire:model="validity_days" placeholder="Lifetime" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-bold focus:bg-white">
+                            @error('validity_days') <span class="text-rose-600 text-[10px]">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 items-center">
+                        <div class="space-y-2">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" wire:model.live="is_free" class="rounded border-slate-300 text-brand-600 focus:ring-0">
                                 <span class="font-bold text-slate-700">Free Access</span>

@@ -23,8 +23,11 @@ class Dashboard extends Component
             $testsQuery->where('category', $this->categoryFilter);
         }
 
+        $accessibleTestIds = $user->accessibleTestIds();
+
         return view('livewire.portal.dashboard', [
             'tests' => $testsQuery->latest()->get(),
+            'accessibleTestIds' => $accessibleTestIds,
             'recentAttempts' => $user->attempts()
                 ->where('status', AttemptStatus::COMPLETED)
                 ->with('test')
@@ -33,8 +36,8 @@ class Dashboard extends Component
                 ->get(),
             'stats' => [
                 'mocks_taken' => $user->attempts()->where('status', AttemptStatus::COMPLETED)->count(),
-                'series_owned' => $user->packages()->count(),
-                'tests_available' => Test::where('is_published', true)->count(),
+                'series_owned' => count($user->activePackageIds()),
+                'tests_available' => count($accessibleTestIds),
             ],
         ]);
     }

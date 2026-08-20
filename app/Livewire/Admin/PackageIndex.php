@@ -19,6 +19,7 @@ class PackageIndex extends Component
     public string $title = '';
     public string $description = '';
     public float $price = 999.0;
+    public ?int $validity_days = null;
     public bool $is_free = false;
     public bool $is_published = true;
     public array $selectedTests = [];
@@ -29,6 +30,7 @@ class PackageIndex extends Component
         $this->title = '';
         $this->description = '';
         $this->price = 999.0;
+        $this->validity_days = null;
         $this->is_free = false;
         $this->is_published = true;
         $this->selectedTests = [];
@@ -42,6 +44,7 @@ class PackageIndex extends Component
         $this->title = $package->title;
         $this->description = $package->description ?? '';
         $this->price = (float) $package->price;
+        $this->validity_days = $package->validity_days;
         $this->is_free = $package->is_free;
         $this->is_published = $package->is_published;
         $this->selectedTests = $package->tests->pluck('id')->toArray();
@@ -53,6 +56,7 @@ class PackageIndex extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'validity_days' => 'nullable|integer|min:1',
         ]);
 
         $data = [
@@ -60,6 +64,7 @@ class PackageIndex extends Component
             'slug' => Str::slug($this->title),
             'description' => $this->description,
             'price' => $this->is_free ? 0.0 : $this->price,
+            'validity_days' => $this->validity_days,
             'is_free' => $this->is_free,
             'is_published' => $this->is_published,
         ];

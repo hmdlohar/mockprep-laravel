@@ -43,15 +43,23 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($tests as $test)
+                @php($accessible = in_array($test->id, $accessibleTestIds))
                 <div class="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col justify-between shadow-xs hover:shadow-xl hover:border-purple-300 transition group">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
                             <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-purple-50 text-purple-700 border border-purple-200">
                                 {{ strtoupper($test->category->value) }}
                             </span>
-                            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                                Free Access
-                            </span>
+                            @if($accessible)
+                                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                    Unlocked
+                                </span>
+                            @else
+                                <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 inline-flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    Locked
+                                </span>
+                            @endif
                         </div>
 
                         <div>
@@ -74,10 +82,17 @@
                         <div class="text-xs text-slate-500 font-medium">
                             <strong class="text-slate-900 font-bold">{{ $test->total_duration_minutes }} Mins</strong> total
                         </div>
-                        <a href="{{ route('portal.test.instructions', ['test' => $test->slug]) }}" class="inline-flex items-center gap-2 px-5 py-2.5 gradient-btn-primary hover:opacity-95 text-white text-xs font-bold rounded-full shadow-md shadow-purple-500/20 transition">
-                            <span>Attempt Test</span>
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </a>
+                        @if($accessible)
+                            <a href="{{ route('portal.test.instructions', ['test' => $test->slug]) }}" class="inline-flex items-center gap-2 px-5 py-2.5 gradient-btn-primary hover:opacity-95 text-white text-xs font-bold rounded-full shadow-md shadow-purple-500/20 transition">
+                                <span>Attempt Test</span>
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                        @else
+                            <a href="{{ route('portal.series') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-full shadow-md transition">
+                                <span>Buy Series</span>
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            </a>
+                        @endif
                     </div>
                 </div>
             @empty
