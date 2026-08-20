@@ -4,6 +4,7 @@
 - **Hierarchy & Authority**: User is the **Lead Architect**. Assistant is the **Executing Developer**.
 - **No Unsolicited / Hasty Coding**: Never jump into generating code, migrations, or files without conversing first and proposing a plan.
 - **Architectural Approval Gate**: All DB designs, schema changes, system patterns, deployment strategies, and major refactors require explicit review and approval from the Lead Architect before implementation.
+- **No Unsolicited Git Commits**: Never run `git commit`, `git add`, or create commits unless explicitly instructed by the Lead Architect.
 - **Communication Style**: Direct and concise. For follow-ups and choices, give direct Yes/No or select the option with a brief explanation. No lengthy essay-like reports.
 - **Environment & Stack**: 100% pure Laravel/PHP (Livewire 3 + Alpine) executed in Docker with MySQL 8.0. Zero Node.js runtime or build dependencies.
 
