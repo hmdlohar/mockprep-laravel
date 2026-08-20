@@ -12,7 +12,7 @@
     <header class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
-            <a href="{{ route('portal.catalog') }}" class="flex items-center gap-2">
+            <a href="{{ auth()->check() ? auth()->user()->homeUrl() : route('portal.series') }}" class="flex items-center gap-2">
                 <div class="flex flex-col">
                     <span class="text-xl font-black tracking-tight leading-none text-brand-600">
                         On Your
@@ -25,9 +25,10 @@
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-700">
-                <a href="{{ route('portal.catalog') }}" class="hover:text-brand-600 transition">Test Series</a>
-                <a href="#courses" class="hover:text-brand-600 transition">Courses</a>
-                <a href="{{ route('portal.catalog') }}" class="hover:text-brand-600 transition">Free CAT Mock</a>
+                @auth
+                    <a href="{{ route('portal.dashboard') }}" class="hover:text-brand-600 transition">Dashboard</a>
+                @endauth
+                <a href="{{ route('portal.series') }}" class="hover:text-brand-600 transition">Test Series</a>
             </nav>
 
             <!-- Actions / Auth -->
@@ -40,13 +41,15 @@
                     @endif
 
                     <div class="flex items-center gap-3 pl-2">
-                        @if(auth()->user()->avatar)
-                            <img src="{{ auth()->user()->avatar }}" class="w-8 h-8 rounded-full border border-slate-200 object-cover" alt="{{ auth()->user()->name }}">
-                        @else
-                            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-xs">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                            </div>
-                        @endif
+                        <a href="{{ route('portal.profile') }}" title="My Profile" class="hover:opacity-80 transition">
+                            @if(auth()->user()->avatar)
+                                <img src="{{ auth()->user()->avatar }}" class="w-8 h-8 rounded-full border border-slate-200 object-cover" alt="{{ auth()->user()->name }}">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-xs">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                                </div>
+                            @endif
+                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="px-3.5 py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition">
@@ -83,8 +86,7 @@
             </div>
 
             <div class="flex items-center gap-6 text-xs text-slate-400 font-medium">
-                <a href="{{ route('portal.catalog') }}" class="hover:text-white transition">Test Series</a>
-                <a href="#courses" class="hover:text-white transition">Courses</a>
+                <a href="{{ route('portal.series') }}" class="hover:text-white transition">Test Series</a>
                 <a href="#blogs" class="hover:text-white transition">Blogs</a>
                 <a href="#about" class="hover:text-white transition">About</a>
                 <a href="#contact" class="hover:text-white transition">Contact</a>

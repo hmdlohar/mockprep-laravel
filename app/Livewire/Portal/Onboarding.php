@@ -30,7 +30,7 @@ class Onboarding extends Component
     {
         $user = Auth::user();
         if ($user && $user->is_onboarded) {
-            $this->redirectRoute('portal.catalog');
+            $this->redirectRoute('portal.dashboard');
         }
     }
 
@@ -48,7 +48,7 @@ class Onboarding extends Component
                 'is_onboarded' => true,
             ]);
 
-            $this->redirectRoute('portal.catalog');
+            $this->redirectRoute('portal.dashboard');
         }
     }
 

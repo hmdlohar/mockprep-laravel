@@ -29,19 +29,7 @@ class Login extends Component
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             session()->regenerate();
-
-            $user = Auth::user();
-            if (!$user->is_onboarded && $user->isStudent()) {
-                $this->redirectRoute('portal.onboarding');
-                return;
-            }
-
-            if ($user->isAdmin()) {
-                $this->redirectRoute('admin.dashboard');
-                return;
-            }
-
-            $this->redirectRoute('portal.catalog');
+            $this->redirect(Auth::user()->homeUrl());
             return;
         }
 

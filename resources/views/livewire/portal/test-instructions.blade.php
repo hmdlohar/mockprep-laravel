@@ -80,7 +80,7 @@
         </div>
 
         <div class="flex items-center justify-between pt-2">
-            <a href="{{ route('portal.catalog') }}" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">&larr; Back to Mock Catalog</a>
+            <a href="{{ route('portal.dashboard') }}" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">&larr; Back to Mock Catalog</a>
             <button wire:click="startExam" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold rounded-xl shadow-md shadow-emerald-600/20 transition">
                 I Am Ready To Begin &rarr;
             </button>

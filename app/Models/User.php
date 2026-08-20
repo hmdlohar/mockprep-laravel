@@ -54,6 +54,15 @@ class User extends Authenticatable
         return $this->role === UserRole::STUDENT;
     }
 
+    public function homeUrl(): string
+    {
+        return match (true) {
+            $this->isAdmin() => route('admin.dashboard'),
+            $this->isStudent() && !$this->is_onboarded => route('portal.onboarding'),
+            default => route('portal.dashboard'),
+        };
+    }
+
     public function packages(): BelongsToMany
     {
         return $this->belongsToMany(Package::class, 'user_packages')

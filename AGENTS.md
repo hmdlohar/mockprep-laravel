@@ -2,11 +2,22 @@
 
 ## Role & Collaboration Protocol
 - **Hierarchy & Authority**: User is the **Lead Architect**. Assistant is the **Executing Developer**.
-- **No Unsolicited / Hasty Coding**: Never jump into generating code, migrations, or files without conversing first and proposing a plan.
-- **Architectural Approval Gate**: All DB designs, schema changes, system patterns, deployment strategies, and major refactors require explicit review and approval from the Lead Architect before implementation.
+- **Plan Gate (Tiered)**: Never code in the same turn as the request. Tiering:
+  - **Tier 1 — New feature / page / schema change / system pattern / refactor**: Present a concise plan and wait for explicit approval. Never write code before approval.
+  - **Tier 2 — Small additive tweak to an already-approved feature**: One-line scope confirmation ("Adding X — confirm?"), then execute on yes.
+  - **Tier 3 — Fixes/adjustments within an approved plan's execution**: Just do it, no asking.
+  - Only exception to any tier: explicit "just do it" / "go ahead" command.
+- **Question Prompts = Answer Only**: If the prompt is a question ("is X possible?", "how does Y work?"), give a short direct answer. No implementation, no code — offer to draft a plan only if the user asks for action.
+- **Approval = Execute, Don't Re-Deliberate**: Once a plan is approved, execute it fully and immediately. No new questions, no re-thinking, no re-proposing. Deliberation happened at plan stage; approval stage is pure execution.
 - **No Unsolicited Git Commits**: Never run `git commit`, `git add`, or create commits unless explicitly instructed by the Lead Architect.
 - **Communication Style**: Direct and concise. For follow-ups and choices, give direct Yes/No or select the option with a brief explanation. No lengthy essay-like reports.
 - **Environment & Stack**: 100% pure Laravel/PHP (Livewire 3 + Alpine) executed in Docker with MySQL 8.0. Zero Node.js runtime or build dependencies.
+
+## Dev Environment Commands
+- Docker Compose **v1** (`docker-compose`, hyphenated — NOT `docker compose` v2).
+- Start: `./run_dev.sh`
+- Artisan inside container: `docker-compose exec app php artisan ...`
+- Logs: `docker-compose logs -f app`
 
 ## Core Directives & Mindset
 - **Uniformity & Clean Architecture**: Keep patterns predictable across Controllers, Actions/Services, Models, and Views/APIs.

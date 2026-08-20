@@ -73,6 +73,6 @@ class GoogleAuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('portal.catalog');
+        return redirect()->route('portal.dashboard');
     }
 }

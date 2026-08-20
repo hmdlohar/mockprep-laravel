@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\ImpersonationController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\PackageIndex;
@@ -11,13 +12,16 @@ use App\Livewire\Admin\QuestionImporter;
 use App\Livewire\Admin\QuestionIndex;
 use App\Livewire\Admin\TestBuilder;
 use App\Livewire\Admin\TestIndex;
+use App\Livewire\Admin\UserIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Cbt\ExamRunner;
+use App\Livewire\Portal\Dashboard as PortalDashboard;
 use App\Livewire\Portal\Onboarding;
-use App\Livewire\Portal\TestCatalog;
+use App\Livewire\Portal\Profile;
 use App\Livewire\Portal\TestInstructions;
 use App\Livewire\Portal\TestResult;
+use App\Livewire\Portal\TestSeries;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -35,14 +39,21 @@ Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect()->route('portal.catalog');
+    return redirect()->route('portal.series');
 })->name('logout');
+
+// Impersonation: one-time, short-lived magic login link
+Route::get('/impersonate/{token}', ImpersonationController::class)->name('impersonate');
 
 // Student Onboarding
 Route::get('/onboarding', Onboarding::class)->middleware('auth')->name('portal.onboarding');
 
-// Student Portal & Catalog
-Route::get('/', TestCatalog::class)->name('portal.catalog');
+// Student Profile
+Route::get('/profile', Profile::class)->middleware('auth')->name('portal.profile');
+
+// Student Portal
+Route::get('/', PortalDashboard::class)->middleware('auth')->name('portal.dashboard');
+Route::get('/test-series', TestSeries::class)->name('portal.series');
 Route::get('/test/{test:slug}/instructions', TestInstructions::class)->name('portal.test.instructions');
 Route::get('/cbt/attempt/{attempt}', ExamRunner::class)->name('cbt.runner');
 Route::get('/attempt/{attempt}/result', TestResult::class)->name('portal.test.result');
@@ -50,6 +61,7 @@ Route::get('/attempt/{attempt}/result', TestResult::class)->name('portal.test.re
 // Admin Workspace (Guarded by AdminMiddleware)
 Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/users', UserIndex::class)->name('users');
     Route::get('/questions', QuestionIndex::class)->name('questions');
     Route::get('/import', QuestionImporter::class)->name('import');
     Route::get('/passages', PassageIndex::class)->name('passages');

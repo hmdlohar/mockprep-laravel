@@ -9,7 +9,7 @@
             <p class="text-xs text-slate-500 mt-1">Submitted on {{ $attempt->submitted_at?->format('d M Y, h:i A') ?? 'Just now' }}</p>
         </div>
 
-        <a href="{{ route('portal.catalog') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition">
+        <a href="{{ route('portal.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition">
             &larr; Back to Test Catalog
         </a>
     </div>
