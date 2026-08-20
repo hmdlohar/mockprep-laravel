@@ -1,66 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# On Your Mocks (MockPrep Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> **High-Performance CBT (Computer-Based Test) Exam & Practice Platform**  
+> *100% Pure Laravel 11 + Livewire 3 + Alpine.js | MySQL 8.0 | Zero Node.js Runtime/Build Dependencies*
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Key Architectural Pillars
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Pure PHP/Blade Stack**: Built strictly using **Laravel 11, Livewire 3, Alpine.js, and Tailwind CSS (via CDN)**. No Node.js build steps (`npm run build`), no Webpack/Vite complexity, and zero frontend runtime dependencies on the server.
+2. **Authentic CBT Exam Emulation**: Pixel-accurate simulation of national CAT / CMAT / XAT exam screens (Sectional timers, question status palette, floating scientific calculator, keyboard-free navigation, and instant autosave).
+3. **Extensible Bulk Question Importer**: Multi-format question ingestion engine (`app/Services/Import/`) with JSONP stripping, Netlify image proxy transformation, duplicate detection, and topic taxonomy mapping.
+4. **Unbroken Question-Set Guarantee**: Invariant engine (`QuestionSetPicker.php`) ensuring Reading Comprehension and DILR passage sets are never split or broken when building tests from imported pools.
+5. **Production Ready**: Optimized for Hostinger Web Hosting and VPS Docker deployments with database session/cache stores and forced HTTPS routing.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Architecture & Directory Overview
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```text
+app/
+├── Actions/
+│   ├── EvaluateExamAttemptAction.php     # Pure scoring engine (+3 correct, -1 incorrect for MCQ, 0 for TITA)
+│   └── BuildTestFromBlueprintAction.php  # Test blueprint assembly action
+├── Console/Commands/
+│   ├── MakeAdminCommand.php              # Promotes/creates admin via `php artisan make:admin`
+│   └── BulkImportFolderCommand.php       # CLI batch folder importer
+├── Enums/
+│   ├── ExamCategory.php                  # CAT, XAT, SNAP, NMAT, CMAT, IIFT, MHCET
+│   ├── SectionCategory.php               # VA, DILR, QA
+│   ├── QuestionType.php                  # MCQ, TITA
+│   ├── AttemptStatus.php                 # IN_PROGRESS, COMPLETED, TIMED_OUT, ABANDONED
+│   ├── AnswerStatus.php                  # NOT_VISITED, NOT_ANSWERED, ANSWERED, MARKED_FOR_REVIEW, ANSWERED_AND_MARKED
+│   └── UserRole.php                      # ADMIN, STUDENT
+├── Http/
+│   ├── Controllers/GoogleAuthController.php # Socialite Google OAuth handler
+│   └── Middleware/AdminMiddleware.php      # Guards `/admin/*` routes
+├── Livewire/
+│   ├── Admin/
+│   │   ├── Dashboard.php                 # Metrics overview
+│   │   ├── QuestionIndex.php             # Question Lake with source & section filters
+│   │   ├── QuestionImporter.php          # 2-step staging importer & direct test generator
+│   │   ├── PassageIndex.php              # Reading Comprehension & DILR caselet management
+│   │   ├── TestIndex.php                 # Test catalog management
+│   │   ├── TestBuilder.php               # Visual test creator
+│   │   └── PackageIndex.php              # Test series bundling & pricing
+│   ├── Auth/                             # Login & Registration components
+│   ├── Cbt/ExamRunner.php                # High-speed CBT Exam runner
+│   └── Portal/                           # Catalog, Instructions, Results, Onboarding
+└── Services/Import/
+    ├── Contracts/QuestionImportParserInterface.php # Extensible parser contract
+    ├── Parsers/JsonpQuestionParser.php             # JSONP & Netlify image proxy transformer
+    ├── DuplicateDetector.php                       # Exact (source, external_id) + content hashing
+    ├── QuestionSetPicker.php                       # Atomic unbroken question-set selector
+    └── Actions/CommitImportAction.php              # Database persistence & snapshot test builder
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ⚙️ Local Development (Docker)
 
-## Laravel Sponsors
+The project runs inside Docker with PHP 8.3 CLI/FPM and MySQL 8.0:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# 1. Start Docker containers
+docker-compose up -d
 
-### Premium Partners
+# 2. Run Database Migrations
+docker-compose exec app php artisan migrate
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# 3. Seed Sample Data (Optional)
+docker-compose exec app php artisan db:seed
 
-## Contributing
+# 4. Create an Admin Account
+docker-compose exec app php artisan make:admin hmdlohar@gmail.com
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The application is available locally at: **`http://localhost:8000`**
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🌐 Production Deployment (Hostinger hPanel)
 
-## Security Vulnerabilities
+1. **Connect Git Repository**:
+   - In Hostinger hPanel, go to **Advanced $\rightarrow$ Git**.
+   - Install Path: `public_html`
+   - Branch: `main`
+2. **Document Root**:
+   - Point Document Root to `public_html/public` (or rely on the root `.htaccess` included in the repo).
+3. **Environment Setup (`public_html/.env`)**:
+   ```dotenv
+   APP_NAME="MockPrep"
+   APP_ENV=production
+   APP_KEY=base64:...
+   APP_DEBUG=false
+   APP_URL=https://yourdomain.com
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=u280428969_mp_laravel
+   DB_USERNAME=u280428969_mp_laravel
+   DB_PASSWORD=your_password
 
-## License
+   SESSION_DRIVER=database
+   CACHE_STORE=database
+   QUEUE_CONNECTION=database
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   ```
+4. **Run Initial Setup (via SSH)**:
+   ```bash
+   cd public_html
+   composer install --no-dev --optimize-autoloader
+   php artisan key:generate
+   php artisan migrate --force
+   php artisan make:admin your_email@gmail.com
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+
+---
+
+## 🛡️ Developer Rules & Protocols
+
+All developers and AI pair programmers must strictly adhere to the guidelines set in [`AGENTS.md`](./AGENTS.md):
+- **Hierarchy**: User is the Lead Architect; Developer is the Executor. Propose plans before generating code or migrations.
+- **No Unsolicited Commits**: Never run `git commit` unless explicitly instructed by the Lead Architect.
+- **Mandatory Async Loading States**: Every interactive button, filter, and form submission must feature explicit loading states (`wire:loading`, animated SVG spinners, and disabled attributes).
+- **Pure Laravel Stack**: Zero Node.js or npm build dependencies allowed in the codebase.
+
